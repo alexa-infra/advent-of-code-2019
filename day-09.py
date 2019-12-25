@@ -45,52 +45,45 @@ def process_gen(data, inp):
         op = data[current]
         mc, mb, ma, op = conv_op(op)
 
+        get_a = lambda: getter(current + 1, ma)
+        get_b = lambda: getter(current + 2, mb)
+        set_a = lambda x: setter(current + 1, ma, x)
+        set_c = lambda x: setter(current + 3, mc, x)
+
         if op == 99:
             return
         if op == 1:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            setter(current + 3, mc, a + b)
+            a, b = get_a(), get_b()
+            set_c(a + b)
             current += 4
         elif op == 2:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            setter(current + 3, mc, a * b)
+            a, b = get_a(), get_b()
+            set_c(a * b)
             current += 4
         elif op == 3:
             i = inp.pop()
-            setter(current + 1, ma, i)
+            set_a(i)
             current += 2
         elif op == 4:
-            a = getter(current + 1, ma)
+            a = get_a()
             yield a
             current += 2
         elif op == 5:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            if a != 0:
-                current = b
-            else:
-                current += 3
+            a, b = get_a(), get_b()
+            current = b if a != 0 else current + 3
         elif op == 6:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            if a == 0:
-                current = b
-            else:
-                current += 3
+            a, b = get_a(), get_b()
+            current = b if a == 0 else current + 3
         elif op == 7:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            setter(current + 3, mc, 1 if a < b else 0)
+            a, b = get_a(), get_b()
+            set_c(1 if a < b else 0)
             current += 4
         elif op == 8:
-            a = getter(current + 1, ma)
-            b = getter(current + 2, mb)
-            setter(current + 3, mc, 1 if a == b else 0)
+            a, b = get_a(), get_b()
+            set_c(1 if a == b else 0)
             current += 4
         elif op == 9:
-            a = getter(current + 1, ma)
+            a = get_a()
             rel_base += a
             current += 2
     assert False
